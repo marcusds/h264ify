@@ -29,12 +29,32 @@ document.addEventListener('DOMContentLoaded', function() {
 		for(i = 0; i < videoLength; i++) {
 			var sources = videos[i].getElementsByTagName('source');
 			var sourcesLength = sources.length, i2 = 0;
-			for(i2 = 0; i2 < sourcesLength; i2++) {
-				if(typeof sources[i2].type !== 'string') {
-					continue;
+			
+			if(sourcesLength > 0) {
+				videos[i].src = false;
+				videos[i].preload = 'none';
+				videos[i].pause();
+				var play = false, preload;
+				if(videos[i].autoplay === true) {
+					videos[i].autoplay = false;
+					preload = videos[i].preload;
+					play = true;
 				}
-				if(sources[i2].type === 'video/mp4') {
-					videos[i].src = sources[i2].src;
+				if(videos[i].currentTime > 0 && videos[i].paused === false && videos[i].ended) {
+					videos[i].pause();
+					play = true;
+				}
+				for(i2 = 0; i2 < sourcesLength; i2++) {
+					if(typeof sources[i2].type !== 'string') {
+						continue;
+					}
+					if(sources[i2].type === 'video/mp4') {
+						videos[i].src = sources[i2].src;
+						videos[i].preload = preload;
+						if(play === true) {
+							videos[i].play();
+						}
+					}
 				}
 			}
 		}
